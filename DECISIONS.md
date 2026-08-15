@@ -1,0 +1,35 @@
+# Decisions
+
+A running log, written as each decision is taken. Format is fixed by `CLAUDE.md`.
+
+---
+
+## 2026-08-14 — Android only; iOS is not built
+Options: install Xcode (~10 GB) and target both platforms; Android only; neither, and run in Expo Go.
+Chose: Android only — the machine has no Xcode and no Android SDK, and spending Friday evening on two toolchains puts Saturday's 90-minute scaffold budget at risk before a line of code exists.
+Rejected because: a second platform doubles the surface for native build failures during U3, which `TASKS.md` already names as the most likely way the weekend fails. iOS is recorded as a known limitation in the README rather than pretended.
+
+## 2026-08-14 — React Navigation, not expo-router
+Options: `create-expo-app` default template (expo-router, file-based routing); `blank-typescript` template with React Navigation wired by hand.
+Chose: `blank-typescript` + React Navigation native stack and tabs, as `SPEC.md` §3 specifies.
+Rejected because: expo-router hides the navigator setup inside the file system. The auth-stack-to-tab-navigator transition is a thing to be able to explain out loud, and "I created a folder" is not an explanation of it.
+
+## 2026-08-14 — `android/` is committed, `ios/` is not
+Options: keep the Expo template's default (both native folders gitignored, regenerated via `expo prebuild`); commit both; commit `android/` only.
+Chose: commit `android/` — `SPEC.md` §3 justifies running `expo prebuild` specifically so the native config is inspectable, and that claim is empty if the folder never reaches the repo.
+Rejected because: leaving it ignored means a reviewer cannot see how Firebase is wired in — the Gradle plugin lines, `google-services.json` placement, the config-plugin output. That is precisely the JD line about native environments. `ios/` stays ignored because without Xcode it cannot be generated or built, and an uncompilable folder is noise.
+
+## 2026-08-14 — App identity: Shelf / `com.suatkarabicak.shelf`
+Options: leave the template's `ReactNativeProject` and rename near the release build; set the identity now.
+Chose: set it now — `app.json` name `Shelf`, slug `shelf`, `android.package` `com.suatkarabicak.shelf`.
+Rejected because: `android.package` is baked into the prebuild output. Changing it after `android/` is generated and committed means regenerating and re-reviewing the whole native folder during U5, which is the ship block with the least slack.
+
+## 2026-08-15 — Named exports everywhere, including screens
+Options: CLAUDE.md allows default exports for screen components (React Navigation convention)
+Chose: Named exports for all components, including screens
+Rejected because: Default exports allow inconsistent import naming across files; named exports keep IDE rename/auto-import reliable, which matters more than saving a few characters per import
+
+## 2026-08-15 — Nested navigation: Catalog tab owns its own stack
+Options: (a) Detail nested inside Catalog's stack, tab bar stays visible; (b) Detail as a top-level modal-style screen, tab bar hidden
+Chose: (a) nested stack
+Rejected because: the core loop is browse -> detail -> favourite -> check favourites; hiding the tab bar on Detail would force back-navigation before the user can check what they favourited
