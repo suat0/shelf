@@ -44,3 +44,22 @@ promise outside React state, splitting the coordination logic across two places.
 (b) also keeps src/lib/api free of any dependency on src/features/auth, and keeps
 the token out of reach of any Zustand devtools/inspection middleware that might
 get added later.
+
+## 2026-08-15 — Cold start: NetworkError keeps the session, ApiError clears it
+Options: (a) any refresh failure on cold start signs the user out; (b) only a
+real ApiError (expired/invalid token) signs out — a NetworkError (no internet)
+leaves the stored session in place and lets the app continue as signed-in
+Chose: (b)
+Rejected because: (a) punishes a user for having no internet, not for having
+an invalid session — indistinguishable from the "empty screen when cached data
+exists" failure SPEC.md already warns against for the catalog. The risk (stale
+token treated as valid until the next real request) is self-correcting once
+the 401-refresh-replay flow in apiFetch exists.
+
+## 2026-08-15 — Skip /auth/me on cold start restore
+Options: (a) call GET /auth/me after a successful refresh to get the username;
+(b) sign in with an empty username, since nothing currently displays it
+Chose: (b)
+Rejected because: no screen in the app shows the username outside a
+hypothetical future profile screen — an extra network call for a value nothing
+reads yet is unjustified. Revisit if a profile/account screen is added.
