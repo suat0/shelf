@@ -33,3 +33,14 @@ Rejected because: Default exports allow inconsistent import naming across files;
 Options: (a) Detail nested inside Catalog's stack, tab bar stays visible; (b) Detail as a top-level modal-style screen, tab bar hidden
 Chose: (a) nested stack
 Rejected because: the core loop is browse -> detail -> favourite -> check favourites; hiding the tab bar on Detail would force back-navigation before the user can check what they favourited
+
+## 2026-08-15 — Access token in a module-scope store, not Zustand
+Options: (a) accessToken as Zustand state; (b) accessToken in a plain module-scope
+variable inside src/lib/api, Zustand only holds UI-facing session status
+Chose: (b)
+Rejected because: the single-flight refresh promise already has to live in module
+scope (SPEC.md requires it) — putting the token in Zustand would still leave the
+promise outside React state, splitting the coordination logic across two places.
+(b) also keeps src/lib/api free of any dependency on src/features/auth, and keeps
+the token out of reach of any Zustand devtools/inspection middleware that might
+get added later.
