@@ -26,3 +26,18 @@ export function getRefreshPromise(): Promise<string> | null {
 export function setRefreshPromise(promise: Promise<string> | null): void {
     refreshPromise = promise;
 }
+
+// A callback the app registers once (in App.tsx) to react when the session
+// dies for good — refresh failed, nothing left to retry. Kept as a plain
+// slot for the same reason accessToken and refreshPromise are: this layer
+// must not import src/features/auth to call signOut() directly. Whatever
+// registers the handler decides what "session expired" means to the UI.
+let onSessionExpired: (() => void) | null = null;
+
+export function setSessionExpiredHandler(handler: (() => void) | null): void {
+  onSessionExpired = handler;
+}
+
+export function notifySessionExpired(): void {
+  onSessionExpired?.();
+}
