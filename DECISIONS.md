@@ -63,3 +63,22 @@ Chose: (b)
 Rejected because: no screen in the app shows the username outside a
 hypothetical future profile screen — an extra network call for a value nothing
 reads yet is unjustified. Revisit if a profile/account screen is added.
+
+## 2026-08-16 — SQLite over AsyncStorage/Realm for the offline cache
+Options: (a) AsyncStorage — single JSON blob per key; (b) Realm/WatermelonDB —
+reactive NoSQL object databases; (c) SQLite via expo-sqlite, hand-written schema
+Chose: (c)
+Rejected because:
+- AsyncStorage has no query engine — filtering or sorting means pulling the
+  entire JSON blob into memory and doing it in JS. Fine at this app's scale,
+  but doesn't scale past a few hundred rows, and there's no way to write a
+  real WHERE/ORDER BY against it.
+- Realm/WatermelonDB are reactive object databases built for offline-first
+  apps where local writes need to auto-propagate to UI — real strength, but
+  it's a native dependency with its own learning curve and mental model
+  (not SQL), which is more setup and surface area than a two-day scope with
+  one cached table justifies.
+- SQLite gives real SQL — WHERE, ORDER BY, hand-written schema — at a
+  complexity cost that fits a single products table and a single favourites
+  table. The read-through pattern (SPEC.md 4.2) doesn't need reactivity from
+  the DB layer either; TanStack Query already owns re-fetching and UI updates.
