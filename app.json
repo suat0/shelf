@@ -11,6 +11,7 @@
     },
     "android": {
       "package": "com.suat0.shelf",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -25,7 +26,10 @@
     "plugins": [
       "expo-secure-store",
       "expo-image",
-      "expo-sqlite"
+      "expo-sqlite",
+      "@react-native-firebase/app",
+      "@react-native-firebase/analytics",
+      "@react-native-firebase/crashlytics"
     ]
   }
 }
