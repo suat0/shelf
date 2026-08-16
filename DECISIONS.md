@@ -95,3 +95,14 @@ and reconcile." (b) doesn't work structurally: initialData must be synchronous
 and a SQLite read is async. (c) is more state to manage in CatalogScreen, but
 it's the only option that actually shows cached rows first regardless of
 network speed, not just on failure.
+
+## 2026-08-16 — Analytics/Crash composition: explicit flag, not __DEV__
+Options: (a) select implementation based on __DEV__; (b) an explicit
+FIREBASE_ENABLED constant, flipped by hand
+Chose: (b)
+Rejected because: __DEV__ answers "am I in development mode", not "is Firebase
+actually wired and working" — the two can diverge (e.g. Firebase native setup
+incomplete even in a dev build, or wanting console logging in a prod debug
+build). Given U3 carries an explicit two-hour hard stop with a known risk of
+Firebase setup not finishing, an explicit flag makes the fallback a one-line
+change rather than something implied by build mode.
