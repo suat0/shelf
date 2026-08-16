@@ -13,16 +13,25 @@ jest.mock('expo-secure-store', () => {
   };
 });
 
+// Shared handles so individual tests can control what the db returns:
+//   mockGetAllAsync.mockResolvedValueOnce([...rows])
+// Reset between tests in the global afterEach below.
+export const mockGetAllAsync = jest.fn(() => Promise.resolve([]));
+export const mockRunAsync = jest.fn(() => Promise.resolve({ lastInsertRowId: 0, changes: 0 }));
+export const mockExecAsync = jest.fn(() => Promise.resolve());
+
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(() =>
     Promise.resolve({
-      execAsync: jest.fn(() => Promise.resolve()),
-      runAsync: jest.fn(() => Promise.resolve({ lastInsertRowId: 0, changes: 0 })),
-      getAllAsync: jest.fn(() => Promise.resolve([])),
+      execAsync: mockExecAsync,
+      runAsync: mockRunAsync,
+      getAllAsync: mockGetAllAsync,
       getFirstAsync: jest.fn(() => Promise.resolve(null)),
     }),
   ),
 }));
+
+
 import {server} from 'src/lib/api/mocks/server';
 
 beforeAll(() => server.listen({onUnhandledRequest: 'error'}));
