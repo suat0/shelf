@@ -5,11 +5,13 @@ import { useAuth } from 'src/features/auth/useAuth';
 import { setSessionExpiredHandler } from 'src/lib/api/tokenStore';
 import { queryClient } from 'src/lib/queryClient';
 import { initSchema } from 'src/lib/db/schema';
+import { getCrashlytics, setCrashlyticsCollectionEnabled } from '@react-native-firebase/crashlytics';
 
 export default function App() {
   const { restoreSession, signOut } = useAuth();
 
   useEffect(() => {
+    setCrashlyticsCollectionEnabled(getCrashlytics(), true);
     setSessionExpiredHandler(signOut);
     initSchema().then(() => {
       restoreSession();
