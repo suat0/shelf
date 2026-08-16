@@ -4,13 +4,16 @@ import { RootNavigator } from 'src/navigation/RootNavigator';
 import { useAuth } from 'src/features/auth/useAuth';
 import { setSessionExpiredHandler } from 'src/lib/api/tokenStore';
 import { queryClient } from 'src/lib/queryClient';
+import { initSchema } from 'src/lib/db/schema';
 
 export default function App() {
   const { restoreSession, signOut } = useAuth();
 
   useEffect(() => {
     setSessionExpiredHandler(signOut);
-    restoreSession();
+    initSchema().then(() => {
+      restoreSession();
+    });
 
     return () => setSessionExpiredHandler(null);
   }, []);

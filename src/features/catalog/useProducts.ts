@@ -1,10 +1,15 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { fetchProduct, fetchProducts, PAGE_SIZE } from 'src/features/catalog/catalogApi';
+import { cacheProducts } from 'src/lib/db/productsRepository';
 
 export function useProducts() {
   return useInfiniteQuery({
     queryKey: ['products'],
-    queryFn: ({ pageParam }) => fetchProducts(pageParam),
+    queryFn: async ({ pageParam }) => {
+      const result = await fetchProducts(pageParam);
+      await cacheProducts(result.products);
+      return result;
+    },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       const nextSkip = lastPage.skip + lastPage.limit;
