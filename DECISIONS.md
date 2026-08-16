@@ -82,3 +82,16 @@ Rejected because:
   complexity cost that fits a single products table and a single favourites
   table. The read-through pattern (SPEC.md 4.2) doesn't need reactivity from
   the DB layer either; TanStack Query already owns re-fetching and UI updates.
+
+## 2026-08-16 — Read-through cache: separate state, not queryFn fallback
+Options: (a) queryFn tries network first, falls back to SQLite only on
+NetworkError; (b) pass cached rows as TanStack Query's initialData; (c) load
+cached rows into their own useState via useEffect, network query runs
+independently, screen merges the two for display
+Chose: (c)
+Rejected because: (a) makes network the primary source and cache the fallback
+— the opposite of SPEC.md 4.2's "render from SQLite immediately, then fetch
+and reconcile." (b) doesn't work structurally: initialData must be synchronous
+and a SQLite read is async. (c) is more state to manage in CatalogScreen, but
+it's the only option that actually shows cached rows first regardless of
+network speed, not just on failure.
