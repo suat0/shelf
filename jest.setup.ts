@@ -19,6 +19,7 @@ jest.mock('expo-secure-store', () => {
 export const mockGetAllAsync = jest.fn<Promise<any[]>, any[]>(() => Promise.resolve([]));
 export const mockRunAsync = jest.fn(() => Promise.resolve({ lastInsertRowId: 0, changes: 0 }));
 export const mockExecAsync = jest.fn(() => Promise.resolve());
+export const mockGetFirstAsync = jest.fn<Promise<any>, any[]>(() => Promise.resolve(null));
 
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(() =>
@@ -26,7 +27,7 @@ jest.mock('expo-sqlite', () => ({
       execAsync: mockExecAsync,
       runAsync: mockRunAsync,
       getAllAsync: mockGetAllAsync,
-      getFirstAsync: jest.fn(() => Promise.resolve(null)),
+      getFirstAsync: mockGetFirstAsync,
     }),
   ),
 }));
