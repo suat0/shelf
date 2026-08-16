@@ -13,4 +13,11 @@ export function fetchProduct(id: number): Promise<Product> {
   return authenticatedFetch<Product>(`/products/${id}`);
 }
 
+export function searchProducts(query: string, signal?: AbortSignal): Promise<ProductListResponse> {
+  return authenticatedFetch<ProductListResponse>(
+    `/products/search?q=${encodeURIComponent(query)}`,
+    { signal },
+  );
+}
+
 export { PAGE_SIZE };

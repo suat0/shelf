@@ -1,9 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProducts } from 'src/features/catalog/useProducts';
 import { useCachedProducts } from 'src/features/catalog/useCachedProducts';
+import { useSearch } from 'src/features/catalog/useSearch';
+import { SearchBar } from 'src/features/catalog/SearchBar';
 import { ProductRow, ROW_HEIGHT } from 'src/features/catalog/ProductRow';
 import type { CatalogStackParamList } from 'src/navigation/types';
 import type { Product } from 'src/lib/api/types';
@@ -12,22 +14,18 @@ type CatalogNavigationProp = NativeStackNavigationProp<CatalogStackParamList, 'C
 
 export function CatalogScreen() {
   const navigation = useNavigation<CatalogNavigationProp>();
+  const [searchText, setSearchText] = useState('');
   const cachedProducts = useCachedProducts();
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useProducts();
+  const searchQuery = useSearch(searchText);
+
+  const isSearching = searchText.trim().length > 0;
 
   const networkProducts = data?.pages.flatMap((page) => page.products);
-  // Network data wins once it arrives (it's the source of truth); until
-  // then, or if the network never succeeds, cached rows fill the screen
-  // instead of nothing. This is the "reconcile" half of read-through.
   const products = networkProducts ?? cachedProducts;
   const showingCacheOnly = !networkProducts && cachedProducts.length > 0;
-    console.log('[Catalog]', {
-  isError,
-  showingCacheOnly,
-  networkProductsCount: networkProducts?.length,
-  cachedCount: cachedProducts.length,
-});
+
   const handlePress = useCallback(
     (id: number) => {
       navigation.navigate('Detail', { productId: id });
@@ -41,16 +39,39 @@ export function CatalogScreen() {
   );
 
   const getItemLayout = useCallback(
-    (_: unknown, index: number) => ({
-      length: ROW_HEIGHT,
-      offset: ROW_HEIGHT * index,
-      index,
-    }),
+    (_: unknown, index: number) => ({ length: ROW_HEIGHT, offset: ROW_HEIGHT * index, index }),
     [],
   );
 
-  // Only show the full-screen spinner if we have nothing at all to show —
-  // if cache has rows, show those instead of blocking on the network.
+  // Search mode: a completely separate render path. Search results don't
+  // paginate or use the offline cache — SPEC.md scopes search to the
+  // server-side endpoint, not a cached/offline concern.
+  if (isSearching) {
+    const searchResults = searchQuery.data?.products ?? [];
+
+    return (
+      <View style={{ flex: 1 }}>
+        <SearchBar value={searchText} onChangeText={setSearchText} />
+        {searchQuery.isLoading || searchQuery.isDebouncing ? (
+          <View style={styles.center}>
+            <ActivityIndicator />
+          </View>
+        ) : searchResults.length === 0 ? (
+          <View style={styles.center}>
+            <Text>No results for "{searchText}".</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={renderItem}
+            getItemLayout={getItemLayout}
+          />
+        )}
+      </View>
+    );
+  }
+
   if (isLoading && cachedProducts.length === 0) {
     return (
       <View style={styles.center}>
@@ -70,34 +91,33 @@ export function CatalogScreen() {
     );
   }
 
-  if (products.length === 0) {
-    return (
-      <View style={styles.center}>
-        <Text>No products found.</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={{ flex: 1 }}>
+      <SearchBar value={searchText} onChangeText={setSearchText} />
       {(isError || showingCacheOnly) && (
         <View style={styles.offlineBanner}>
           <Text style={styles.offlineBannerText}>You're offline. Showing saved products.</Text>
         </View>
       )}
-      <FlatList
-        data={products}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={renderItem}
-        getItemLayout={getItemLayout}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-          }
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={styles.footer} /> : null}
-      />
+      {products.length === 0 ? (
+        <View style={styles.center}>
+          <Text>No products found.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={products}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={renderItem}
+          getItemLayout={getItemLayout}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={styles.footer} /> : null}
+        />
+      )}
     </View>
   );
 }

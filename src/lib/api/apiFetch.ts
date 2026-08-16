@@ -5,6 +5,7 @@ type ApiFetchOptions = {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
     headers?: Record<string, string>;
     body?: unknown;
+    signal?: AbortSignal;
 };
 
 // Generic so each call site gets a typed response, e.g.
@@ -20,6 +21,7 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
                 ...options.headers,
             },
             body: options.body ? JSON.stringify(options.body) : undefined,
+            signal: options.signal,
         });
     } catch (cause) {
         throw new NetworkError(`Request to ${path} failed`, cause);
