@@ -7,7 +7,7 @@ import {
   setRefreshPromise,
   setSessionExpiredHandler,
 } from 'src/lib/api/tokenStore';
-import { setStoredRefreshToken, getStoredRefreshToken, clearStoredRefreshToken } from 'src/lib/auth/secureStorage';
+import { setStoredRefreshToken, clearStoredRefreshToken } from 'src/lib/auth/secureStorage';
 
 beforeEach(async () => {
   // Module-scope state in tokenStore doesn't reset between tests on its own —

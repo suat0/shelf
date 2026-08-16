@@ -65,7 +65,7 @@ export function CatalogScreen() {
           </View>
         ) : searchResults.length === 0 ? (
           <View style={styles.center}>
-            <Text>No results for "{searchText}".</Text>
+            <Text>No results for &quot;{searchText}&quot;.</Text>
           </View>
         ) : (
           <FlatList
@@ -90,7 +90,7 @@ export function CatalogScreen() {
   if (isError && cachedProducts.length === 0) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>Couldn't load products.</Text>
+        <Text style={styles.errorText}>Couldn&apos;t load products.</Text>
         <Text style={styles.retry} onPress={() => refetch()}>
           Retry
         </Text>
@@ -103,7 +103,7 @@ export function CatalogScreen() {
       <SearchBar value={searchText} onChangeText={setSearchText} />
       {(isError || showingCacheOnly) && (
         <View style={styles.offlineBanner}>
-          <Text style={styles.offlineBannerText}>You're offline. Showing saved products.</Text>
+          <Text style={styles.offlineBannerText}>You&apos;re offline. Showing saved products.</Text>
         </View>
       )}
       {products.length === 0 ? (

@@ -32,7 +32,7 @@ export function DetailScreen() {
   if (isError || !product) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>Couldn't load this product.</Text>
+        <Text style={styles.errorText}>Couldn&apos;t load this product.</Text>
       </View>
     );
   }

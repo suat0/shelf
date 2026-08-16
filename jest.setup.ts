@@ -13,13 +13,24 @@ jest.mock('expo-secure-store', () => {
   };
 });
 
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn(),
+  logEvent: jest.fn(),
+}));
+
+jest.mock('@react-native-firebase/crashlytics', () => ({
+  getCrashlytics: jest.fn(),
+  recordError: jest.fn(),
+  setCrashlyticsCollectionEnabled: jest.fn(),
+}));
+
 // Shared handles so individual tests can control what the db returns:
 //   mockGetAllAsync.mockResolvedValueOnce([...rows])
 // Reset between tests in the global afterEach below.
-export const mockGetAllAsync = jest.fn<Promise<any[]>, any[]>(() => Promise.resolve([]));
+export const mockGetAllAsync = jest.fn<Promise<unknown[]>, unknown[]>(() => Promise.resolve([]));
 export const mockRunAsync = jest.fn(() => Promise.resolve({ lastInsertRowId: 0, changes: 0 }));
 export const mockExecAsync = jest.fn(() => Promise.resolve());
-export const mockGetFirstAsync = jest.fn<Promise<any>, any[]>(() => Promise.resolve(null));
+export const mockGetFirstAsync = jest.fn<Promise<unknown>, unknown[]>(() => Promise.resolve(null));
 
 jest.mock('expo-sqlite', () => ({
   openDatabaseAsync: jest.fn(() =>

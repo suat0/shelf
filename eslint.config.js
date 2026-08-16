@@ -39,5 +39,14 @@ module.exports = [
       },
     },
   },
+  {
+    files: ['**/*.test.{ts,tsx}', 'jest.setup.ts', 'jest.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+        ...globals.node,
+      },
+    },
+  },
   prettierConfig,
 ];

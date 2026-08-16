@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { fetchProduct, fetchProducts, PAGE_SIZE } from 'src/features/catalog/catalogApi';
+import { fetchProduct, fetchProducts} from 'src/features/catalog/catalogApi';
 import { cacheProducts } from 'src/lib/db/productsRepository';
 
 export function useProducts() {
