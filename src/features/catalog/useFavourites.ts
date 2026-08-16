@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { addFavourite, removeFavourite, getFavourites, isFavourite } from 'src/lib/db/favouritesRepository';
 import type { Product } from 'src/lib/api/types';
+import { analytics } from 'src/lib/telemetry';
 
 export function useFavourites() {
   const [favourites, setFavourites] = useState<Product[]>([]);
@@ -33,6 +34,7 @@ export function useIsFavourite(productId: number) {
     } else {
       await addFavourite(product);
     }
+    analytics.logEvent('favourite_toggled', { productId: product.id, favourited: !favourited });
     refresh();
   }
 

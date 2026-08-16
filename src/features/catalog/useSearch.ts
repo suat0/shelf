@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { searchProducts } from 'src/features/catalog/catalogApi';
+import { analytics } from 'src/lib/telemetry';
 
 const DEBOUNCE_MS = 300;
 
@@ -24,5 +25,12 @@ export function useSearch(rawQuery: string) {
     queryFn: ({ signal }) => searchProducts(trimmed, signal),
     enabled: trimmed.length > 0,
   });
+
+  useEffect(() => {
+    if (query.data) {
+      analytics.logEvent('search_performed', { resultCount: query.data.products.length });
+    }
+  }, [query.data]);
+  
   return {...query, isDebouncing};
 }

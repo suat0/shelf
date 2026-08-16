@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FlatList, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { SearchBar } from 'src/features/catalog/SearchBar';
 import { ProductRow, ROW_HEIGHT } from 'src/features/catalog/ProductRow';
 import type { CatalogStackParamList } from 'src/navigation/types';
 import type { Product } from 'src/lib/api/types';
+import { analytics } from 'src/lib/telemetry';
 
 type CatalogNavigationProp = NativeStackNavigationProp<CatalogStackParamList, 'CatalogList'>;
 
@@ -25,6 +26,12 @@ export function CatalogScreen() {
   const networkProducts = data?.pages.flatMap((page) => page.products);
   const products = networkProducts ?? cachedProducts;
   const showingCacheOnly = !networkProducts && cachedProducts.length > 0;
+
+  useEffect(() => {
+  if (showingCacheOnly || isError) {
+    analytics.logEvent('offline_render');
+  }
+}, [showingCacheOnly, isError]);
 
   const handlePress = useCallback(
     (id: number) => {

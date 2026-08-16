@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 
 import { login } from 'src/features/auth/authApi';
 import { useAuth } from 'src/features/auth/useAuth';
 import { ApiError } from 'src/lib/api/errors';
+import { analytics } from 'src/lib/telemetry';
 
 export function LoginScreen() {
   const { signIn } = useAuth();
@@ -24,12 +25,14 @@ export function LoginScreen() {
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
       });
+      analytics.logEvent('login_succeeded');
     } catch (error) {
       if (error instanceof ApiError && error.status === 400) {
         setErrorMessage('Wrong username or password');
       } else {
         setErrorMessage('Something went wrong. Try again.');
       }
+      analytics.logEvent('login_failed');
     } finally {
       setIsSubmitting(false);
     }

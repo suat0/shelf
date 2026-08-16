@@ -4,6 +4,8 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import { useProduct } from 'src/features/catalog/useProducts';
 import { useIsFavourite } from 'src/features/catalog/useFavourites';
 import type { CatalogStackParamList } from 'src/navigation/types';
+import { analytics } from 'src/lib/telemetry';
+import { useEffect } from 'react';
 
 type DetailRouteProp = RouteProp<CatalogStackParamList, 'Detail'>;
 
@@ -12,6 +14,12 @@ export function DetailScreen() {
   const { productId } = route.params;
   const { data: product, isLoading, isError } = useProduct(productId);
   const { favourited, toggle } = useIsFavourite(productId);
+
+  useEffect(() => {
+    if (product) {
+      analytics.logEvent('product_opened', { productId: product.id });
+    }
+  }, [product]);
 
   if (isLoading) {
     return (
