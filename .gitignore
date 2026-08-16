@@ -50,3 +50,6 @@ DECISIONS.md
 JD-MAPPING.md
 AGENTS.md
 README-TEMPLATE.md
+
+# Firebase config (contains project-specific keys, not meant for public repo)
+google-services.json
