@@ -16,7 +16,7 @@ jest.mock('expo-secure-store', () => {
 // Shared handles so individual tests can control what the db returns:
 //   mockGetAllAsync.mockResolvedValueOnce([...rows])
 // Reset between tests in the global afterEach below.
-export const mockGetAllAsync = jest.fn(() => Promise.resolve([]));
+export const mockGetAllAsync = jest.fn<Promise<any[]>, any[]>(() => Promise.resolve([]));
 export const mockRunAsync = jest.fn(() => Promise.resolve({ lastInsertRowId: 0, changes: 0 }));
 export const mockExecAsync = jest.fn(() => Promise.resolve());
 
