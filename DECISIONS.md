@@ -106,3 +106,18 @@ incomplete even in a dev build, or wanting console logging in a prod debug
 build). Given U3 carries an explicit two-hour hard stop with a known risk of
 Firebase setup not finishing, an explicit flag makes the fallback a one-line
 change rather than something implied by build mode.
+
+## 2026-08-17 — UI polish: React Native Paper for ready-made components
+Options: (a) hand-rolled `src/ui/theme.ts` design tokens applied to existing
+StyleSheet-based screens, no new dependency; (b) React Native Paper —
+Material Design component library maintained by Callstack; (c) Gluestack UI
+— copy-paste component approach with Tailwind-like utility props; (d) Tamagui
+— highest customization and performance, own compiler step
+Chose: (b)
+Rejected because: (a) keeps every screen hand-styling primitives, slower to
+get a polished look in the remaining time; (c) and (d) are less widely known
+and carry more setup/config decisions to defend in an interview than a
+project this size justifies. Paper is mature, Expo-compatible with no extra
+native config, and its "why" is a one-line answer. Wired via `PaperProvider`
+in App.tsx with a theme in src/ui/theme.ts (currently MD3LightTheme,
+unmodified) — screens will be converted to Paper components one at a time.
