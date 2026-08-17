@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
 import { Image } from 'expo-image';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useProduct } from 'src/features/catalog/useProducts';
@@ -32,7 +33,9 @@ export function DetailScreen() {
   if (isError || !product) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>Couldn&apos;t load this product.</Text>
+        <Text variant="bodyMedium" style={styles.errorText}>
+          Couldn&apos;t load this product.
+        </Text>
       </View>
     );
   }
@@ -41,27 +44,34 @@ export function DetailScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={product.thumbnail} style={styles.image} contentFit="cover" />
       <View style={styles.titleRow}>
-        <Text style={styles.title}>{product.title}</Text>
-        <Pressable onPress={() => toggle(product)} hitSlop={8}>
-          <Text style={styles.favouriteIcon}>{favourited ? '★' : '☆'}</Text>
-        </Pressable>
+        <Text variant="headlineSmall" style={styles.title}>
+          {product.title}
+        </Text>
+        <IconButton
+          icon={favourited ? 'star' : 'star-outline'}
+          iconColor={favourited ? '#f5a623' : undefined}
+          size={28}
+          onPress={() => toggle(product)}
+        />
       </View>
-      <Text style={styles.brand}>{product.brand}</Text>
-      <Text style={styles.price}>${product.price.toFixed(2)}</Text>
-      <Text style={styles.description}>{product.description}</Text>
+      <Text variant="bodyMedium" style={styles.brand}>
+        {product.brand}
+      </Text>
+      <Text variant="titleLarge">${product.price.toFixed(2)}</Text>
+      <Text variant="bodyLarge" style={styles.description}>
+        {product.description}
+      </Text>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  errorText: { color: '#666' },
+  errorText: { opacity: 0.6 },
   container: { padding: 16, gap: 8 },
   image: { width: '100%', height: 240, borderRadius: 12 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: 20, fontWeight: '700', flex: 1 },
-  favouriteIcon: { fontSize: 28, color: '#f5a623' },
-  brand: { fontSize: 14, color: '#666' },
-  price: { fontSize: 18, fontWeight: '600' },
-  description: { fontSize: 15, color: '#333', marginTop: 8, lineHeight: 22 },
+  title: { flex: 1 },
+  brand: { opacity: 0.6 },
+  description: { marginTop: 8, lineHeight: 22 },
 });
