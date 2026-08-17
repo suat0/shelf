@@ -1,8 +1,10 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import { AuthNavigator } from 'src/navigation/AuthNavigator';
 import { AppTabNavigator } from 'src/navigation/AppTabNavigator';
 import { useAuth } from 'src/features/auth/useAuth';
+import { navigationTheme } from 'src/ui/theme';
 
 export function RootNavigator() {
   const { status } = useAuth();
@@ -16,7 +18,7 @@ export function RootNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       {status === 'signedIn' ? <AppTabNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

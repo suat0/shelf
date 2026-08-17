@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Pressable, Text } from 'react-native';
+import { Button } from 'react-native-paper';
 import { CatalogScreen } from 'src/features/catalog/CatalogScreen';
 import { DetailScreen } from 'src/features/catalog/DetailScreen';
 import { CatalogStackParamList } from 'src/navigation/types';
@@ -17,9 +17,9 @@ export function CatalogNavigator() {
         component={CatalogScreen}
         options={{
           headerRight: () => (
-            <Pressable onPress={() => signOut()}>
-              <Text style={{ color: '#007aff' }}>Sign out</Text>
-            </Pressable>
+            <Button mode="text" onPress={() => signOut()}>
+              Sign out
+            </Button>
           ),
         }}
       />
