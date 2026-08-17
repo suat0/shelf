@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
+import { Text } from 'react-native-paper';
 import type { Product } from 'src/lib/api/types';
 
 export const ROW_HEIGHT = 88;
@@ -12,7 +13,10 @@ type ProductRowProps = {
 
 function ProductRowComponent({ product, onPress }: ProductRowProps) {
   return (
-    <Pressable style={styles.row} onPress={() => onPress(product.id)}>
+    <Pressable
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+      onPress={() => onPress(product.id)}
+    >
       <Image
         source={product.thumbnail}
         style={styles.thumbnail}
@@ -20,13 +24,13 @@ function ProductRowComponent({ product, onPress }: ProductRowProps) {
         contentFit="cover"
       />
       <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>
+        <Text variant="titleSmall" numberOfLines={1}>
           {product.title}
         </Text>
-        <Text style={styles.brand} numberOfLines={1}>
+        <Text variant="bodySmall" style={styles.brand} numberOfLines={1}>
           {product.brand}
         </Text>
-        <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+        <Text variant="labelLarge">${product.price.toFixed(2)}</Text>
       </View>
     </Pressable>
   );
@@ -49,6 +53,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 12,
   },
+  rowPressed: {
+    opacity: 0.6,
+  },
   thumbnail: {
     width: 56,
     height: 56,
@@ -58,16 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 2,
   },
-  title: {
-    fontSize: 15,
-    fontWeight: '600',
-  },
   brand: {
-    fontSize: 13,
-    color: '#666',
-  },
-  price: {
-    fontSize: 14,
-    fontWeight: '500',
+    opacity: 0.6,
   },
 });

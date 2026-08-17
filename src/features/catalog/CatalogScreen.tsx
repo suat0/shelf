@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProducts } from 'src/features/catalog/useProducts';
@@ -65,7 +66,7 @@ export function CatalogScreen() {
           </View>
         ) : searchResults.length === 0 ? (
           <View style={styles.center}>
-            <Text>No results for &quot;{searchText}&quot;.</Text>
+            <Text variant="bodyMedium">No results for &quot;{searchText}&quot;.</Text>
           </View>
         ) : (
           <FlatList
@@ -90,10 +91,12 @@ export function CatalogScreen() {
   if (isError && cachedProducts.length === 0) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>Couldn&apos;t load products.</Text>
-        <Text style={styles.retry} onPress={() => refetch()}>
-          Retry
+        <Text variant="bodyMedium" style={styles.errorText}>
+          Couldn&apos;t load products.
         </Text>
+        <Button mode="text" onPress={() => refetch()}>
+          Retry
+        </Button>
       </View>
     );
   }
@@ -103,12 +106,14 @@ export function CatalogScreen() {
       <SearchBar value={searchText} onChangeText={setSearchText} />
       {(isError || showingCacheOnly) && (
         <View style={styles.offlineBanner}>
-          <Text style={styles.offlineBannerText}>You&apos;re offline. Showing saved products.</Text>
+          <Text variant="bodySmall" style={styles.offlineBannerText}>
+            You&apos;re offline. Showing saved products.
+          </Text>
         </View>
       )}
       {products.length === 0 ? (
         <View style={styles.center}>
-          <Text>No products found.</Text>
+          <Text variant="bodyMedium">No products found.</Text>
         </View>
       ) : (
         <FlatList
@@ -131,9 +136,8 @@ export function CatalogScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 8 },
-  errorText: { color: '#666' },
-  retry: { color: '#007aff', fontWeight: '600' },
+  errorText: { opacity: 0.6 },
   footer: { paddingVertical: 16 },
   offlineBanner: { backgroundColor: '#fff3cd', padding: 8, alignItems: 'center' },
-  offlineBannerText: { color: '#856404', fontSize: 13 },
+  offlineBannerText: { color: '#856404' },
 });
