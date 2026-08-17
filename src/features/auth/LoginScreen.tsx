@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { login } from 'src/features/auth/authApi';
 import { useAuth } from 'src/features/auth/useAuth';
 import { ApiError } from 'src/lib/api/errors';
@@ -40,34 +41,41 @@ export function LoginScreen() {
   
   return (
     <View style={styles.container}>
+      <Text variant="headlineMedium" style={styles.title}>
+        Shelf
+      </Text>
       <TextInput
-        style={styles.input}
-        placeholder="Username"
+        mode="outlined"
+        label="Username"
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
-        editable={!isSubmitting}
+        disabled={isSubmitting}
+        style={styles.input}
       />
       <TextInput
-        style={styles.input}
-        placeholder="Password"
+        mode="outlined"
+        label="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        editable={!isSubmitting}
+        disabled={isSubmitting}
+        style={styles.input}
       />
-      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
-      <Pressable style={styles.button} onPress={handleSubmit} disabled={!canSubmit}>
-        {isSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Sign in</Text>}
-      </Pressable>
+      {errorMessage && (
+        <HelperText type="error" visible>
+          {errorMessage}
+        </HelperText>
+      )}
+      <Button mode="contained" onPress={handleSubmit} disabled={!canSubmit} loading={isSubmitting}>
+        Sign in
+      </Button>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, gap: 12 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12 },
-  error: { color: '#d00' },
-  button: { backgroundColor: '#111', borderRadius: 8, padding: 14, alignItems: 'center' },
-  buttonText: { color: '#fff', fontWeight: '600' },
+  container: { flex: 1, justifyContent: 'center', padding: 24 },
+  title: { marginBottom: 24, textAlign: 'center' },
+  input: { marginBottom: 12 },
 });
