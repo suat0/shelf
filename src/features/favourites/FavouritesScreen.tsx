@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useFavourites } from 'src/features/catalog/useFavourites';
@@ -43,13 +44,18 @@ export function FavouritesScreen() {
   return (
     <View style={{ flex: 1 }}>
       {__DEV__ && (
-        <Pressable onPress={() => crashReporter.crash()} style={styles.crashButton}>
-          <Text style={styles.crashButtonText}>Crash test (dev only)</Text>
-        </Pressable>
+        <Button
+          mode="text"
+          textColor="#c00"
+          onPress={() => crashReporter.crash()}
+          style={styles.crashButton}
+        >
+          Crash test (dev only)
+        </Button>
       )}
       {favourites.length === 0 ? (
         <View style={styles.center}>
-          <Text>No favourites yet.</Text>
+          <Text variant="bodyMedium">No favourites yet.</Text>
         </View>
       ) : (
         <FlatList
@@ -65,6 +71,5 @@ export function FavouritesScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  crashButton: { padding: 12, backgroundColor: '#fee', alignItems: 'center' },
-  crashButtonText: { color: '#c00', fontWeight: '600' },
+  crashButton: { backgroundColor: '#fee' },
 });
